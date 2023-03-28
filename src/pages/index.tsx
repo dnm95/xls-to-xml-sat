@@ -59,10 +59,10 @@ export default function Home() {
     const parsedData: CreateXMLResponse = await response.json();
 
     if (type === "catalog") {
-      return setXMLS({ balance: String(xmls?.balance), catalog: parsedData.response.url })
+      return setXMLS((prevState) => ({ balance: String(prevState?.balance), catalog: parsedData.response.url }))
     }
 
-    return setXMLS({ balance: parsedData.response.url, catalog: String(xmls?.catalog) })
+    return setXMLS((prevState) => ({ balance: parsedData.response.url, catalog: String(prevState?.catalog) }))
   }
 
   const readUploadFile = () => {
@@ -93,6 +93,12 @@ export default function Home() {
     readUploadFile()
   }
 
+  const onReset = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+
+    return setXMLS(undefined)
+  }
+
   return (
     <>
       <Head>
@@ -102,12 +108,12 @@ export default function Home() {
       </Head>
       <main>
         {isLogged ? (
-          <div className="container max-w-screen-md mx-auto px-4">
-            <h1 className="text-xl text-center font-medium py-6">
-              Generador de XML para contabilidad eléctronica (SAT)
-            </h1>
-            <form onSubmit={onBeforeSubmit} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
+          <div className="container max-w-screen-md mx-auto px-2 py-4">
+            <form onSubmit={onBeforeSubmit} className="flex flex-col items-center justify-center h-screen gap-5">
+              <h1 className="text-xl text-center font-medium py-6">
+                Generador de XML para contabilidad eléctronica (SAT)
+              </h1>
+              <div className="flex flex-col w-full gap-2">
                 <label htmlFor="rfc">RFC:</label>
                 <input
                   type="text"
@@ -117,9 +123,10 @@ export default function Home() {
                   autoComplete="off"
                   value={data.rfc}
                   onChange={onChangeInput}
+                  required
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col w-full gap-2">
                 <label htmlFor="month">Mes:</label>
                 <input
                   type="number"
@@ -128,11 +135,13 @@ export default function Home() {
                   className="rounded border-2 px-2 py-2 text-sm h-auto"
                   autoComplete="off"
                   maxLength={2}
+                  minLength={2}
                   value={data.month}
                   onChange={onChangeInput}
+                  required
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col w-full gap-2">
                 <label htmlFor="year">Año:</label>
                 <input
                   type="number"
@@ -141,11 +150,13 @@ export default function Home() {
                   className="rounded border-2 px-2 py-2 text-sm h-auto"
                   autoComplete="off"
                   maxLength={4}
+                  minLength={4}
                   value={data.year}
                   onChange={onChangeInput}
+                  required
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col w-full gap-2">
                 <label htmlFor="upload">Seleccione el archivo de excel:</label>
                 <input
                   type="file"
@@ -159,26 +170,49 @@ export default function Home() {
                   hover:file:bg-sky-300
                 "
                   onChange={onChangeInputFile}
+                  required
                 />
               </div>
-              <div className="flex flex-row my-2">
-                <button
-                  type="submit"
-                  className="rounded p-3 bg-sky-700 text-white text-center w-full"
-                  disabled={loading}
-                >
-                  Generar XMLs
-                </button>
+
+              {(xmls?.balance || xmls?.catalog) && (
+                <div className="flex flex-row w-full gap-4">
+                  <a href={xmls.balance} target="_blank" rel="noreferrer" className="rounded p-3 bg-green-700 text-white text-center w-full">
+                    Descargar balanza
+                  </a>
+                  <a href={xmls.catalog} target="_blank" rel="noreferrer" className="rounded p-3 bg-green-700 text-white text-center w-full">
+                      Descargar catalogo
+                  </a>
+                </div>
+              )}
+
+              <div className="flex flex-row w-full my-2">
+                {xmls?.balance || xmls?.catalog ? (
+                  <button
+                    className="rounded p-3 bg-sky-700 text-white text-center w-full disabled:opacity-75"
+                    disabled={loading}
+                    onClick={onReset}
+                  >
+                    Reiniciar
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="rounded p-3 bg-sky-700 text-white text-center w-full disabled:opacity-75"
+                    disabled={loading}
+                  >
+                    Generar XMLs
+                  </button>
+                )}
               </div>
             </form>
           </div>
         ) : (
-          <div className="container max-w-screen-md mx-auto pt-10">
-            <h1 className="text-xl text-center font-medium py-6">
-              Ingresar al generador de XML para contabilidad eléctronica (SAT)
-            </h1>
-            <form onSubmit={onLogin} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
+          <div className="container max-w-screen-md mx-auto px-2 py-4">
+            <form onSubmit={onLogin} className="flex flex-col items-center justify-center h-screen gap-5">
+              <h1 className="text-xl text-center font-medium py-6">
+                Ingresar al generador de XML para contabilidad eléctronica (SAT)
+              </h1>
+              <div className="flex flex-col w-full gap-2">
                 <label htmlFor="password">Contraseña:</label>
                 <input
                   type="password"
@@ -190,10 +224,10 @@ export default function Home() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <div className="flex flex-row my-2">
+              <div className="flex flex-row w-full my-2">
                 <button
                   type="submit"
-                  className="rounded p-3 bg-sky-700 text-white text-center w-full"
+                  className="rounded p-3 bg-sky-700 text-white text-center w-full disabled:opacity-75"
                   disabled={loading}
                 >
                   Acceder

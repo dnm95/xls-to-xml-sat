@@ -76,7 +76,7 @@ export default function Home() {
         const json: ExcelKeys[] = xlsx.utils.sheet_to_json(worksheet, {
           skipHidden: true,
           defval: 0.00,
-          header: ["accountNumber", "description", "initialBalance", "balanceDue", "haveBalance", "finalBalance", "bundlerCode"],
+          header: ["accountNumber", "description", "initialBalance", "balanceDue", "haveBalance", "finalBalance", "bundlerCode", "level", "nature"],
         });
         const parsedXMLS = parseJSON(json, true, true, data)
 

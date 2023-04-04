@@ -16,7 +16,7 @@ export interface ExcelKeys {
   balanceDue: number
   haveBalance: number
   finalBalance: number
-  bundlerCode: string
+  bundlerCode: number
   level: number
   nature: string
 }

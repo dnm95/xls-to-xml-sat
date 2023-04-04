@@ -8,7 +8,7 @@ export function parseJSON(json: ExcelKeys[], catalog: boolean, balance: boolean,
     catalogXML = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
     <catalogocuentas:Catalogo xmlns:catalogocuentas="http://www.sat.gob.mx/esquemas/ContabilidadE/1_3/CatalogoCuentas" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/esquemas/ContabilidadE/1_3/CatalogoCuentas http://www.sat.gob.mx/esquemas/ContabilidadE/1_3/CatalogoCuentas/CatalogoCuentas_1_3.xsd" Version="1.3" RFC="${data.rfc}" Mes="${data.month}" Anio="${data.year}">\n`
     json.forEach((obj: ExcelKeys) => {
-      catalogXML = catalogXML + `<catalogocuentas:Ctas CodAgrup="${Number(obj.bundlerCode).toFixed(2)}" NumCta="${obj.accountNumber}" Desc="${String(obj.description).replaceAll(/&/g, "&amp;")}" Nivel="${obj.level}" Natur="${obj.nature}" />\n`
+      catalogXML = catalogXML + `<catalogocuentas:Ctas CodAgrup="${Number(obj.level) === 1 ? Number(obj.bundlerCode).toFixed(0) : Number(obj.bundlerCode).toFixed(2)}" NumCta="${obj.accountNumber}" Desc="${String(obj.description).replaceAll(/&/g, "&amp;")}" Nivel="${obj.level}" Natur="${obj.nature}" />\n`
     })
 
     catalogXML = catalogXML + `</catalogocuentas:Catalogo>`
